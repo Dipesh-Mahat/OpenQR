@@ -17,7 +17,9 @@ export function QRPasswordProtection({ options, onChange }: QRPasswordProtection
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
-  const [isProtected, setIsProtected] = useState(false)
+  const [isProtected, setIsProtected] = useState(
+    options.text.includes('/protect.html?data=') || options.text.includes('/protect.html#')
+  )
   const [passwordError, setPasswordError] = useState('')
 
   const updateOptions = (updates: Partial<QRCodeOptions>) => {
@@ -30,8 +32,35 @@ export function QRPasswordProtection({ options, onChange }: QRPasswordProtection
 
   const toggleProtection = async () => {
     if (isProtected) {
-      // Remove password protection by removing the prefix
-      updateOptions({ text: options.text.replace(/^PWD:.*?:/, '') });
+      // Extract the original URL from the protection URL if it exists
+      let originalText = options.text;
+      
+      try {
+        if (options.text.includes('/protect.html?data=')) {
+          // Get the data parameter
+          const url = new URL(options.text);
+          const encodedData = url.searchParams.get('data') || '';
+          
+          // Decode from base64
+          const decodedData = atob(encodedData);
+          
+          // Extract original content (everything after the first colon)
+          originalText = decodedData.substring(decodedData.indexOf(':') + 1);
+        } else if (options.text.includes('/protect.html#')) {
+          // Get the hash fragment
+          const hashPart = options.text.split('#')[1];
+          
+          // Decode from base64
+          const decodedData = atob(hashPart);
+          
+          // Extract original content (everything after the first colon)
+          originalText = decodedData.substring(decodedData.indexOf(':') + 1);
+        }
+      } catch (error) {
+        console.error('Error extracting original text:', error);
+      }
+      
+      updateOptions({ text: originalText });
       setIsProtected(false);
       setPassword('');
       setConfirmPassword('');
@@ -56,8 +85,17 @@ export function QRPasswordProtection({ options, onChange }: QRPasswordProtection
       // Hash the password for security
       const passwordHash = await sha256(password);
       
-      // Enable password protection by encoding in the text
-      updateOptions({ text: `PWD:${passwordHash}:${options.text}` });
+      // Create the protected data by combining password hash and original content
+      const protectedData = `${passwordHash}:${options.text}`;
+      
+      // Convert to base64 to make it URL safe
+      const base64Data = btoa(protectedData);
+      
+      // Create a URL to the protection page with the data as a query parameter
+      const protectionUrl = `${window.location.origin}/protect.html?data=${encodeURIComponent(base64Data)}`;
+      
+      // Enable password protection by updating the QR code text to the protection URL
+      updateOptions({ text: protectionUrl });
       
       setIsProtected(true);
       setPasswordError('');

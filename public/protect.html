@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Protected QR Content | OpenQR</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background-color: #f9fafb;
+            color: #111827;
+        }
+        .container {
+            max-width: 500px;
+            width: 90%;
+            margin: 40px auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+            padding: 24px;
+        }
+        h1 {
+            font-size: 1.5rem;
+            text-align: center;
+            margin-bottom: 20px;
+            color: #111827;
+        }
+        .lock-icon {
+            display: block;
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 24px;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            border-radius: 50%;
+            position: relative;
+            box-shadow: 0 4px 12px rgba(124, 58, 237, 0.25);
+        }
+        .lock-icon::before {
+            content: '';
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            border: 3px solid white;
+            border-radius: 50%;
+            top: 6px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .lock-icon::after {
+            content: '';
+            position: absolute;
+            width: 28px;
+            height: 20px;
+            border: 3px solid white;
+            border-radius: 6px;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .form-group {
+            margin-bottom: 24px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 14px;
+            color: #4b5563;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+        .button {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: transform 0.1s, box-shadow 0.2s;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+        }
+        .button:hover {
+            background: linear-gradient(135deg, #4338ca, #6d28d9);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(79, 70, 229, 0.3);
+        }
+        .button:active {
+            transform: translateY(0);
+        }
+        .error {
+            color: #ef4444;
+            font-size: 14px;
+            margin-top: 8px;
+            display: none;
+            padding: 8px 12px;
+            background-color: #fef2f2;
+            border-radius: 6px;
+            border-left: 3px solid #ef4444;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 32px;
+            font-size: 14px;
+            color: #6b7280;
+        }
+        .footer a {
+            color: #4f46e5;
+            text-decoration: none;
+        }
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        .dark-mode {
+            background-color: #111827;
+            color: #f9fafb;
+        }
+        .dark-mode .container {
+            background-color: #1f2937;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+        }
+        .dark-mode h1 {
+            color: #f9fafb;
+        }
+        .dark-mode .form-group label {
+            color: #9ca3af;
+        }
+        .dark-mode .form-group input {
+            background-color: #374151;
+            border-color: #4b5563;
+            color: #f9fafb;
+        }
+        .dark-mode .footer {
+            color: #9ca3af;
+        }
+        .dark-mode .error {
+            color: #f87171;
+            background-color: rgba(254, 226, 226, 0.1);
+            border-left-color: #ef4444;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 24px;
+        }
+        .spinner {
+            border: 4px solid rgba(79, 70, 229, 0.1);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border-left-color: #4f46e5;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 12px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .dark-mode .spinner {
+            border-color: rgba(255, 255, 255, 0.1);
+            border-left-color: #6d28d9;
+        }
+        #content-section {
+            text-align: center;
+        }
+        #content-message {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+        .success-icon {
+            display: inline-block;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            border-radius: 50%;
+            position: relative;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+        }
+        .success-icon::before {
+            content: '';
+            position: absolute;
+            width: 30px;
+            height: 15px;
+            border-bottom: 4px solid white;
+            border-left: 4px solid white;
+            transform: rotate(-45deg);
+            top: 20px;
+            left: 14px;
+        }
+        .dark-mode .success-icon {
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+        }
+        #content-link {
+            background: linear-gradient(135deg, #10b981, #059669);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+        }
+        #content-link:hover {
+            background: linear-gradient(135deg, #059669, #047857);
+            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.3);
+        }
+        .shake {
+            animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="lock-icon"></div>
+        <h1>Protected QR Content</h1>
+        <div id="password-section">
+            <div class="form-group">
+                <label for="password">Please enter the password to view the content:</label>
+                <input type="password" id="password" placeholder="Enter password">
+                <div id="error-message" class="error">Incorrect password. Please try again.</div>
+            </div>
+            <button id="unlock-button" class="button">Unlock Content</button>
+            
+            <div id="loading" class="loading">
+                <div class="spinner"></div>
+                <p>Verifying password...</p>
+            </div>
+        </div>
+        <div id="content-section" style="display:none;">
+            <div class="success-icon"></div>
+            <p id="content-message"></p>
+            <a id="content-link" class="button" style="display:none; text-decoration:none; text-align:center; margin-top:24px;">Open Link</a>
+        </div>
+        <div class="footer">
+            Protected by <a href="/" target="_blank">OpenQR</a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user prefers dark mode
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.body.classList.add('dark-mode');
+            }
+
+            // Listen for dark mode changes
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+                if (event.matches) {
+                    document.body.classList.add('dark-mode');
+                } else {
+                    document.body.classList.remove('dark-mode');
+                }
+            });
+
+            // Get the encrypted data from URL parameters or hash fragment
+            let encryptedData;
+            
+            // Check for data in query parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            encryptedData = urlParams.get('data');
+            
+            // If not found, check for data in hash fragment
+            if (!encryptedData && window.location.hash) {
+                encryptedData = window.location.hash.substring(1);
+            }
+            
+            if (!encryptedData) {
+                document.getElementById('content-message').textContent = 'Error: Missing protected data';
+                document.getElementById('password-section').style.display = 'none';
+                document.getElementById('content-section').style.display = 'block';
+                return;
+            }
+            
+            // Decode from base64
+            let passwordHash, content;
+            try {
+                const decodedData = atob(decodeURIComponent(encryptedData));
+                const separatorIndex = decodedData.indexOf(':');
+                
+                if (separatorIndex === -1) {
+                    throw new Error('Invalid data format');
+                }
+                
+                passwordHash = decodedData.substring(0, separatorIndex);
+                content = decodedData.substring(separatorIndex + 1);
+                
+                if (!passwordHash || !content) {
+                    throw new Error('Invalid data format');
+                }
+            } catch (e) {
+                document.getElementById('content-message').textContent = 'Error: Could not decode the protected data';
+                document.getElementById('password-section').style.display = 'none';
+                document.getElementById('content-section').style.display = 'block';
+                return;
+            }
+            
+            const passwordInput = document.getElementById('password');
+            const unlockButton = document.getElementById('unlock-button');
+            const errorMessage = document.getElementById('error-message');
+            const passwordSection = document.getElementById('password-section');
+            const contentSection = document.getElementById('content-section');
+            const contentMessage = document.getElementById('content-message');
+            const contentLink = document.getElementById('content-link');
+            const loadingSection = document.getElementById('loading');
+
+            // Set focus to password field
+            setTimeout(() => {
+                passwordInput.focus();
+            }, 500);
+
+            // Function to check password
+            async function checkPassword() {
+                const enteredPassword = passwordInput.value;
+                if (!enteredPassword) {
+                    errorMessage.textContent = 'Please enter a password';
+                    errorMessage.style.display = 'block';
+                    return;
+                }
+
+                // Show loading spinner
+                unlockButton.style.display = 'none';
+                loadingSection.style.display = 'block';
+
+                try {
+                    // Hash the entered password
+                    const enteredPasswordHash = await sha256(enteredPassword);
+                    
+                    // Compare with the stored hash
+                    if (enteredPasswordHash === passwordHash) {
+                        // Password correct, show content
+                        passwordSection.style.display = 'none';
+                        contentSection.style.display = 'block';
+                        
+                        // Check if the content is a URL
+                        if (isValidURL(content)) {
+                            contentMessage.textContent = 'Password correct! Redirecting to protected content...';
+                            contentLink.href = content;
+                            contentLink.textContent = 'Click here if you are not redirected automatically';
+                            contentLink.style.display = 'block';
+                            
+                            // Automatically redirect after a short delay
+                            setTimeout(() => {
+                                window.location.href = content;
+                            }, 2000);
+                        } else {
+                            contentMessage.textContent = content;
+                        }
+                    } else {
+                        // Password incorrect
+                        errorMessage.textContent = 'Incorrect password. Please try again.';
+                        errorMessage.style.display = 'block';
+                        unlockButton.style.display = 'block';
+                        loadingSection.style.display = 'none';
+                        
+                        // Shake the password field to indicate error
+                        passwordInput.classList.add('shake');
+                        setTimeout(() => {
+                            passwordInput.classList.remove('shake');
+                        }, 500);
+                    }
+                } catch (error) {
+                    console.error('Error verifying password:', error);
+                    errorMessage.textContent = 'An error occurred while verifying the password. Please try again.';
+                    errorMessage.style.display = 'block';
+                    unlockButton.style.display = 'block';
+                    loadingSection.style.display = 'none';
+                }
+            }
+
+            // Add event listeners
+            unlockButton.addEventListener('click', checkPassword);
+            passwordInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    checkPassword();
+                }
+            });
+            
+            // Hide error message when user types
+            passwordInput.addEventListener('input', function() {
+                errorMessage.style.display = 'none';
+            });
+
+            // Function to check if string is valid URL
+            function isValidURL(string) {
+                try {
+                    new URL(string);
+                    return true;
+                } catch (_) {
+                    return false;
+                }
+            }
+
+            // SHA-256 hash function
+            async function sha256(message) {
+                // Encode the message
+                const msgBuffer = new TextEncoder().encode(message);
+                
+                // Hash the message
+                const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+                
+                // Convert to hex string
+                const hashArray = Array.from(new Uint8Array(hashBuffer));
+                const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+                
+                return hashHex;
+            }
+        });
+    </script>
+</body>
+</html>
