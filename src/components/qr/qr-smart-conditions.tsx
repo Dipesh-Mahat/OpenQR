@@ -115,7 +115,7 @@ export function QRSmartConditions({ options, onChange }: QRSmartConditionsProps)
               onClick={() => setConditionType(type.id)}
               className="h-auto py-3 px-2 flex flex-col items-center gap-2"
             >
-              <div className="rounded-full p-2 bg-primary/10 text-primary">
+              <div className={`rounded-full p-2 ${conditionType === type.id ? 'bg-white text-primary' : 'bg-primary/10 text-primary'}`}>
                 <Icon className="w-4 h-4" />
               </div>
               <span className="text-xs">{type.name}</span>

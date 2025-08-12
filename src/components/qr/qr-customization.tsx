@@ -7,8 +7,6 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Palette, Settings, ImageIcon, Frame, Sparkles } from 'lucide-react'
-import { QRAnimation } from './qr-animation'
-import { QRARView } from './qr-ar-view'
 import { QRSmartConditions } from './qr-smart-conditions'
 import { QRPasswordProtection } from './qr-password-protection'
 
@@ -46,6 +44,19 @@ export function QRCustomization({ options, onChange }: QRCustomizationProps) {
     { name: 'Green', fg: '#16a34a', bg: '#dcfce7' },
     { name: 'Purple', fg: '#7c3aed', bg: '#ede9fe' },
     { name: 'Orange', fg: '#ea580c', bg: '#fed7aa' },
+    { name: 'Ocean', fg: '#0891b2', bg: '#e0f2fe' },
+    { name: 'Sunset', fg: '#be185d', bg: '#ffe4e6' },
+    { name: 'Forest', fg: '#166534', bg: '#d1fae5' },
+    { name: 'Midnight', fg: '#312e81', bg: '#e0e7ff' },
+  ]
+  
+  const gradientPresets = [
+    { name: 'Oceanic', colors: ['#0891b2', '#3b82f6'], type: 'linear', rotation: 45 },
+    { name: 'Sunset', colors: ['#f97316', '#db2777'], type: 'linear', rotation: 135 },
+    { name: 'Forest', colors: ['#16a34a', '#065f46'], type: 'linear', rotation: 90 },
+    { name: 'Twilight', colors: ['#7c3aed', '#db2777'], type: 'radial', rotation: 0 },
+    { name: 'Fire', colors: ['#dc2626', '#f97316'], type: 'linear', rotation: 180 },
+    { name: 'Berry', colors: ['#be185d', '#7c3aed'], type: 'linear', rotation: 225 },
   ]
 
   const tabs = [
@@ -82,6 +93,7 @@ export function QRCustomization({ options, onChange }: QRCustomizationProps) {
         <CardContent className="pt-6">
           {activeTab === 'colors' && (
             <div className="space-y-4">
+              <h4 className="text-sm font-medium mb-2">Solid Colors</h4>
               <div className="grid grid-cols-3 gap-2">
                 {presetColors.map((preset) => (
                   <Button
@@ -90,7 +102,8 @@ export function QRCustomization({ options, onChange }: QRCustomizationProps) {
                     className="h-auto p-2 flex flex-col items-center gap-1"
                     onClick={() => updateOptions({
                       foregroundColor: preset.fg,
-                      backgroundColor: preset.bg
+                      backgroundColor: preset.bg,
+                      gradient: undefined
                     })}
                   >
                     <div className="flex">
@@ -107,8 +120,41 @@ export function QRCustomization({ options, onChange }: QRCustomizationProps) {
                   </Button>
                 ))}
               </div>
+              
+              <h4 className="text-sm font-medium mb-2 mt-4">Gradient Presets</h4>
+              <div className="grid grid-cols-3 gap-2">
+                {gradientPresets.map((preset) => (
+                  <Button
+                    key={preset.name}
+                    variant="outline"
+                    className="h-auto p-2 flex flex-col items-center gap-1"
+                    onClick={() => updateOptions({
+                      foregroundColor: preset.colors[0],
+                      backgroundColor: '#ffffff',
+                      gradient: {
+                        type: preset.type as 'linear' | 'radial',
+                        rotation: preset.rotation,
+                        colorStops: [
+                          { offset: 0, color: preset.colors[0] },
+                          { offset: 1, color: preset.colors[1] }
+                        ]
+                      }
+                    })}
+                  >
+                    <div 
+                      className="w-8 h-8 rounded"
+                      style={{ 
+                        background: preset.type === 'linear' 
+                          ? `linear-gradient(${preset.rotation}deg, ${preset.colors[0]}, ${preset.colors[1]})` 
+                          : `radial-gradient(circle, ${preset.colors[0]}, ${preset.colors[1]})`
+                      }}
+                    />
+                    <span className="text-xs">{preset.name}</span>
+                  </Button>
+                ))}
+              </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-4 mt-4">
                 <div>
                   <label className="text-sm font-medium block mb-2">Foreground Color</label>
                   <div className="flex gap-2">
@@ -145,6 +191,17 @@ export function QRCustomization({ options, onChange }: QRCustomizationProps) {
                   </div>
                 </div>
               </div>
+              
+              {options.gradient && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => updateOptions({ gradient: undefined })}
+                  className="mt-2"
+                >
+                  Remove Gradient
+                </Button>
+              )}
             </div>
           )}
 
@@ -200,16 +257,31 @@ export function QRCustomization({ options, onChange }: QRCustomizationProps) {
 
               <div>
                 <label className="text-sm font-medium block mb-2">Pattern Style</label>
-                <div className="grid grid-cols-3 gap-2">
-                  {['squares', 'dots', 'rounded', 'extra-rounded'].map((pattern) => (
+                <div className="grid grid-cols-2 gap-2">
+                  {[
+                    { id: 'squares', label: 'Squares' },
+                    { id: 'dots', label: 'Dots' },
+                    { id: 'rounded', label: 'Rounded' },
+                    { id: 'extra-rounded', label: 'Extra Rounded' }
+                  ].map((pattern) => (
                     <Button
-                      key={pattern}
-                      variant={options.pattern === pattern ? 'default' : 'outline'}
+                      key={pattern.id}
+                      variant={options.pattern === pattern.id ? 'default' : 'outline'}
                       size="sm"
-                      onClick={() => updateOptions({ pattern: pattern as 'dots' | 'squares' | 'classy' | 'classy-rounded' | 'rounded' | 'extra-rounded' })}
-                      className="capitalize"
+                      onClick={() => updateOptions({ 
+                        pattern: pattern.id as 'dots' | 'squares' | 'classy' | 'classy-rounded' | 'rounded' | 'extra-rounded'
+                      })}
+                      className="flex items-center justify-center gap-2"
                     >
-                      {pattern}
+                      <div 
+                        className={`w-4 h-4 ${
+                          pattern.id === 'dots' ? 'rounded-full' : 
+                          pattern.id === 'rounded' ? 'rounded-md' : 
+                          pattern.id === 'extra-rounded' ? 'rounded-full' : 
+                          'rounded-sm'
+                        } bg-current`}
+                      />
+                      <span>{pattern.label}</span>
                     </Button>
                   ))}
                 </div>
@@ -342,15 +414,7 @@ export function QRCustomization({ options, onChange }: QRCustomizationProps) {
           
           {activeTab === 'advanced' && (
             <div className="space-y-8">
-              <QRAnimation options={options} onChange={onChange} />
-              
-              <div className="border-t pt-8">
-                <QRARView options={options} onChange={onChange} />
-              </div>
-              
-              <div className="border-t pt-8">
-                <QRSmartConditions options={options} onChange={onChange} />
-              </div>
+              <QRSmartConditions options={options} onChange={onChange} />
               
               <div className="border-t pt-8">
                 <QRPasswordProtection options={options} onChange={onChange} />
