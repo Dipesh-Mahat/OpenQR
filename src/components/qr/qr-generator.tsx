@@ -27,8 +27,7 @@ export function QRGenerator() {
     foregroundColor: '#000000',
     backgroundColor: '#ffffff',
     cornerSquareStyle: 'square',
-    cornerDotStyle: 'square',
-    pattern: 'squares'
+    cornerDotStyle: 'square'
   })
   const [qrCodeDataURL, setQRCodeDataURL] = useState<string>('')
   const [isGenerating, setIsGenerating] = useState(false)
@@ -147,17 +146,17 @@ export function QRGenerator() {
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-7xl mx-auto">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 max-w-7xl mx-auto">
       {/* Left Panel - Form */}
-      <div className="space-y-6">
+      <div className="space-y-4">
         <Card>
-          <CardHeader>
+          <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2">
               <Target className="w-5 h-5 text-primary" />
               QR Code Generator
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-6">
+          <CardContent className="space-y-4">
             <QRTypeSelector
               selectedType={selectedType}
               onTypeChange={setSelectedType}
@@ -172,7 +171,7 @@ export function QRGenerator() {
         </Card>
 
         <Card>
-          <CardHeader>
+          <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2">
               <Palette className="w-5 h-5 text-primary" />
               Customization
@@ -188,9 +187,9 @@ export function QRGenerator() {
       </div>
 
       {/* Right Panel - Preview and Export */}
-      <div className="space-y-6">
+      <div className="space-y-4">
         <Card>
-          <CardHeader>
+          <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2">
               <Eye className="w-5 h-5 text-primary" />
               Preview
@@ -204,7 +203,7 @@ export function QRGenerator() {
             />
             
             {qrCodeDataURL && (
-              <div className="flex flex-wrap gap-2 mt-4">
+              <div className="flex flex-wrap gap-2 mt-3">
                 <Button
                   onClick={handleCopyToClipboard}
                   variant="outline"
@@ -230,7 +229,7 @@ export function QRGenerator() {
 
         {qrCodeDataURL && (
           <Card>
-            <CardHeader>
+            <CardHeader className="pb-2">
               <CardTitle className="flex items-center gap-2">
                 <Download className="w-5 h-5" />
                 Export Options
@@ -247,7 +246,7 @@ export function QRGenerator() {
 
         {history.length > 0 && (
           <Card>
-            <CardHeader>
+            <CardHeader className="pb-2">
               <CardTitle className="flex items-center gap-2">
                 <History className="w-5 h-5" />
                 Recent QR Codes

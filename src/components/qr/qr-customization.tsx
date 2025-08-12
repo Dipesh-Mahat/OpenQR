@@ -68,9 +68,9 @@ export function QRCustomization({ options, onChange }: QRCustomizationProps) {
   ] as const
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {/* Tab Navigation */}
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-1">
         {tabs.map((tab) => {
           const Icon = tab.icon
           return (
@@ -90,16 +90,16 @@ export function QRCustomization({ options, onChange }: QRCustomizationProps) {
 
       {/* Tab Content */}
       <Card>
-        <CardContent className="pt-6">
+        <CardContent className="pt-4 px-3">
           {activeTab === 'colors' && (
-            <div className="space-y-4">
-              <h4 className="text-sm font-medium mb-2">Solid Colors</h4>
-              <div className="grid grid-cols-3 gap-2">
+            <div className="space-y-3">
+              <h4 className="text-sm font-medium mb-1">Solid Colors</h4>
+              <div className="grid grid-cols-3 gap-1">
                 {presetColors.map((preset) => (
                   <Button
                     key={preset.name}
                     variant="outline"
-                    className="h-auto p-2 flex flex-col items-center gap-1"
+                    className="h-auto p-1 flex flex-col items-center gap-1"
                     onClick={() => updateOptions({
                       foregroundColor: preset.fg,
                       backgroundColor: preset.bg,
@@ -121,13 +121,13 @@ export function QRCustomization({ options, onChange }: QRCustomizationProps) {
                 ))}
               </div>
               
-              <h4 className="text-sm font-medium mb-2 mt-4">Gradient Presets</h4>
-              <div className="grid grid-cols-3 gap-2">
+              <h4 className="text-sm font-medium mb-1 mt-2">Gradient Presets</h4>
+              <div className="grid grid-cols-3 gap-1">
                 {gradientPresets.map((preset) => (
                   <Button
                     key={preset.name}
                     variant="outline"
-                    className="h-auto p-2 flex flex-col items-center gap-1"
+                    className="h-auto p-1 flex flex-col items-center gap-1"
                     onClick={() => updateOptions({
                       foregroundColor: preset.colors[0],
                       backgroundColor: '#ffffff',
@@ -253,38 +253,6 @@ export function QRCustomization({ options, onChange }: QRCustomizationProps) {
                   <option value="Q">Quartile (25%)</option>
                   <option value="H">High (30%)</option>
                 </select>
-              </div>
-
-              <div>
-                <label className="text-sm font-medium block mb-2">Pattern Style</label>
-                <div className="grid grid-cols-2 gap-2">
-                  {[
-                    { id: 'squares', label: 'Squares' },
-                    { id: 'dots', label: 'Dots' },
-                    { id: 'rounded', label: 'Rounded' },
-                    { id: 'extra-rounded', label: 'Extra Rounded' }
-                  ].map((pattern) => (
-                    <Button
-                      key={pattern.id}
-                      variant={options.pattern === pattern.id ? 'default' : 'outline'}
-                      size="sm"
-                      onClick={() => updateOptions({ 
-                        pattern: pattern.id as 'dots' | 'squares' | 'classy' | 'classy-rounded' | 'rounded' | 'extra-rounded'
-                      })}
-                      className="flex items-center justify-center gap-2"
-                    >
-                      <div 
-                        className={`w-4 h-4 ${
-                          pattern.id === 'dots' ? 'rounded-full' : 
-                          pattern.id === 'rounded' ? 'rounded-md' : 
-                          pattern.id === 'extra-rounded' ? 'rounded-full' : 
-                          'rounded-sm'
-                        } bg-current`}
-                      />
-                      <span>{pattern.label}</span>
-                    </Button>
-                  ))}
-                </div>
               </div>
             </div>
           )}

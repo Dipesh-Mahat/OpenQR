@@ -88,7 +88,7 @@ export function QRSmartConditions({ options, onChange }: QRSmartConditionsProps)
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-medium">Smart QR Conditions</h3>
         
@@ -105,7 +105,7 @@ export function QRSmartConditions({ options, onChange }: QRSmartConditionsProps)
         Create dynamic QR codes that change behavior based on conditions like time, location, or user preferences.
       </p>
       
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-2 gap-1">
         {conditionTypes.map((type) => {
           const Icon = type.icon
           return (
@@ -113,9 +113,9 @@ export function QRSmartConditions({ options, onChange }: QRSmartConditionsProps)
               key={type.id}
               variant={conditionType === type.id ? 'default' : 'outline'}
               onClick={() => setConditionType(type.id)}
-              className="h-auto py-3 px-2 flex flex-col items-center gap-2"
+              className="h-auto py-2 px-2 flex flex-col items-center gap-1"
             >
-              <div className={`rounded-full p-2 ${conditionType === type.id ? 'bg-white text-primary' : 'bg-primary/10 text-primary'}`}>
+              <div className={`rounded-full p-1 ${conditionType === type.id ? 'bg-white text-primary' : 'bg-primary/10 text-primary'}`}>
                 <Icon className="w-4 h-4" />
               </div>
               <span className="text-xs">{type.name}</span>
@@ -125,9 +125,9 @@ export function QRSmartConditions({ options, onChange }: QRSmartConditionsProps)
       </div>
       
       <Card>
-        <CardContent className="pt-6 space-y-4">
+        <CardContent className="pt-4 px-3 space-y-3">
           {conditionType === 'time' && (
-            <div className="space-y-4">
+            <div className="space-y-3">
               <p className="text-xs text-muted-foreground">
                 Redirect to different URLs based on the time of day when scanned
               </p>

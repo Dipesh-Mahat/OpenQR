@@ -9,7 +9,6 @@ export interface QRCodeOptions {
   logoSize?: number
   cornerSquareStyle: 'square' | 'dot' | 'extra-rounded'
   cornerDotStyle: 'square' | 'dot'
-  pattern: 'dots' | 'squares' | 'classy' | 'classy-rounded' | 'rounded' | 'extra-rounded'
   gradient?: {
     type: 'linear' | 'radial'
     rotation: number

@@ -1,6 +1,5 @@
 import QRCodeLib from 'qrcode'
 import { QRCodeOptions, ExportOptions } from '@/types/qr'
-import { QRPatternProcessor } from './qr-pattern-processor'
 
 export class QRCodeGenerator {
   static async generateQRCode(options: QRCodeOptions): Promise<string> {
@@ -17,11 +16,6 @@ export class QRCodeGenerator {
     try {
       // Generate QR code as data URL
       const dataURL = await QRCodeLib.toDataURL(options.text, qrOptions)
-      
-      // Apply pattern style
-      if (options.pattern && options.pattern !== 'squares') {
-        return QRPatternProcessor.applyPatternStyle(dataURL, options)
-      }
       
       // If no gradient is set, return the basic QR code
       if (!options.gradient) {
