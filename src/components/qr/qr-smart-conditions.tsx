@@ -64,11 +64,17 @@ export function QRSmartConditions({ options, onChange }: QRSmartConditionsProps)
     
     setConditions(newConditions)
     
-    // Update QR options with smart conditions by encoding in the text
+    // Update QR options with smart conditions by creating a URL to our smart.html page
     if (smartEnabled) {
+      // Create the condition data in the format: SMART:conditionType:defaultURL:conditionsJSON
       const conditionsJSON = JSON.stringify(newConditions[conditionType as keyof typeof conditions]);
-      const updatedText = `SMART:${conditionType}:${options.text}:${conditionsJSON}`;
-      updateOptions({ text: updatedText });
+      const conditionData = `SMART:${conditionType}:${options.text}:${conditionsJSON}`;
+      
+      // Encode the data and create a URL to our smart.html page
+      const encodedData = encodeURIComponent(btoa(conditionData));
+      const smartUrl = `${window.location.origin}/smart.html?data=${encodedData}`;
+      
+      updateOptions({ text: smartUrl });
     }
   }
 
@@ -77,13 +83,34 @@ export function QRSmartConditions({ options, onChange }: QRSmartConditionsProps)
     setSmartEnabled(newState)
     
     if (newState) {
-      // Enable smart QR functionality by encoding in the text
+      // Enable smart QR functionality by creating a URL to our smart.html page
       const conditionsJSON = JSON.stringify(conditions[conditionType as keyof typeof conditions]);
-      const updatedText = `SMART:${conditionType}:${options.text}:${conditionsJSON}`;
-      updateOptions({ text: updatedText });
+      const conditionData = `SMART:${conditionType}:${options.text}:${conditionsJSON}`;
+      
+      // Encode the data and create a URL to our smart.html page
+      const encodedData = encodeURIComponent(btoa(conditionData));
+      const smartUrl = `${window.location.origin}/smart.html?data=${encodedData}`;
+      
+      updateOptions({ text: smartUrl });
     } else {
-      // Disable smart QR by removing the prefix
-      updateOptions({ text: options.text.replace(/^SMART:.*?:([^:]+).*$/, '$1') });
+      // Try to extract the original URL from the smart URL
+      try {
+        const url = new URL(options.text);
+        if (url.pathname === '/smart.html') {
+          const data = url.searchParams.get('data');
+          if (data) {
+            const decodedData = atob(decodeURIComponent(data));
+            const [prefix, type, originalUrl] = decodedData.split(':');
+            if (prefix === 'SMART' && originalUrl) {
+              updateOptions({ text: originalUrl });
+            }
+          }
+        } else {
+          // Not a smart URL, no changes needed
+        }
+      } catch (e) {
+        // Invalid URL, no changes needed
+      }
     }
   }
 
