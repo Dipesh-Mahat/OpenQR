@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Lock, Eye, EyeOff, Shield } from 'lucide-react'
-import { sha256 } from '@/lib/utils'
+import { sha256, generateId } from '@/lib/utils'
 
 interface QRPasswordProtectionProps {
   options: QRCodeOptions
@@ -18,7 +18,7 @@ export function QRPasswordProtection({ options, onChange }: QRPasswordProtection
   const [confirmPassword, setConfirmPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [isProtected, setIsProtected] = useState(
-    options.text.includes('/protect.html?data=') || options.text.includes('/protect.html#')
+    options.text.includes('/protect.html?') || options.text.includes('/protect.html#')
   )
   const [passwordError, setPasswordError] = useState('')
 
@@ -36,13 +36,13 @@ export function QRPasswordProtection({ options, onChange }: QRPasswordProtection
       let originalText = options.text;
       
       try {
-        if (options.text.includes('/protect.html?data=')) {
+        if (options.text.includes('/protect.html?')) {
           // Get the data parameter
           const url = new URL(options.text);
           const encodedData = url.searchParams.get('data') || '';
           
           // Decode from base64
-          const decodedData = atob(encodedData);
+          const decodedData = atob(decodeURIComponent(encodedData));
           
           // Extract original content (everything after the first colon)
           originalText = decodedData.substring(decodedData.indexOf(':') + 1);
@@ -51,7 +51,7 @@ export function QRPasswordProtection({ options, onChange }: QRPasswordProtection
           const hashPart = options.text.split('#')[1];
           
           // Decode from base64
-          const decodedData = atob(hashPart);
+          const decodedData = atob(decodeURIComponent(hashPart));
           
           // Extract original content (everything after the first colon)
           originalText = decodedData.substring(decodedData.indexOf(':') + 1);
@@ -92,7 +92,8 @@ export function QRPasswordProtection({ options, onChange }: QRPasswordProtection
       const base64Data = btoa(protectedData);
       
       // Create a URL to the protection page with the data as a query parameter
-      const protectionUrl = `${window.location.origin}/protect.html?data=${encodeURIComponent(base64Data)}`;
+      // Use a unique ID to prevent QR scanners from seeing full content
+      const protectionUrl = `${window.location.origin}/protect.html?id=${generateId()}&data=${encodeURIComponent(base64Data)}`;
       
       // Enable password protection by updating the QR code text to the protection URL
       updateOptions({ text: protectionUrl });
@@ -166,10 +167,10 @@ export function QRPasswordProtection({ options, onChange }: QRPasswordProtection
               <div className="text-xs text-blue-700 dark:text-blue-300">
                 <p className="font-medium mb-1">How it works:</p>
                 <ul className="list-disc pl-4 space-y-1">
-                  <li>The password is securely hashed and embedded in the QR code</li>
-                  <li>When scanned, users will see a password entry screen</li>
-                  <li>Content is only revealed after correct password entry</li>
-                  <li>Processing happens locally on the user's device for security</li>
+                  <li>The password is securely hashed and embedded in the QR code link</li>
+                  <li>When scanned, users see a link to our password entry page</li>
+                  <li>After entering the correct password, they'll be redirected to your content</li>
+                  <li>Works with all mobile QR scanners and provides enhanced security</li>
                 </ul>
               </div>
             </div>
@@ -180,7 +181,7 @@ export function QRPasswordProtection({ options, onChange }: QRPasswordProtection
       {isProtected && (
         <div className="rounded-md bg-green-50 dark:bg-green-950 p-2 text-xs text-green-700 dark:text-green-300 flex items-center gap-2">
           <Lock className="w-4 h-4" />
-          Your QR code is now password protected! Only users with the password can access the content.
+          Your QR code is now password protected! When scanned, users will see a link to our secure password entry page.
         </div>
       )}
     </div>
