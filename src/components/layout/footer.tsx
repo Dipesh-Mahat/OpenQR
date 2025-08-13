@@ -1,4 +1,4 @@
-import { Github, Heart, Code, Star } from 'lucide-react'
+import { Github, Heart } from 'lucide-react'
 
 export function Footer() {
   return (
@@ -24,7 +24,7 @@ export function Footer() {
             <h3 className="font-semibold mb-4">Community</h3>
             <div className="space-y-3">
               <a
-                href="https://github.com/dipeshmahat/openqr"
+                href="https://github.com/Dipesh-Mahat/OpenQR"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center space-x-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
@@ -33,18 +33,13 @@ export function Footer() {
                 <span>GitHub</span>
               </a>
               <a
-                href="#"
+                href="https://github.com/sponsors/Dipesh-Mahat"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="flex items-center space-x-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
-                <Star className="w-4 h-4" />
-                <span>Star us on GitHub</span>
-              </a>
-              <a
-                href="#"
-                className="flex items-center space-x-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
-                <Code className="w-4 h-4" />
-                <span>Contribute</span>
+                <Heart className="w-4 h-4 text-red-500" />
+                <span>Support Us</span>
               </a>
             </div>
           </div>
@@ -54,7 +49,7 @@ export function Footer() {
           <p className="text-sm text-muted-foreground">
             © 2025 OpenQR. Built by{' '}
             <a 
-              href="https://github.com/dipeshmahat" 
+              href="https://github.com/Dipesh-Mahat" 
               target="_blank" 
               rel="noopener noreferrer"
               className="font-medium hover:text-foreground transition-colors"
