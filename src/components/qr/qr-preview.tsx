@@ -46,16 +46,11 @@ export function QRPreview({ dataURL, isGenerating, options }: QRPreviewProps) {
           options.frame && "border-4",
           options.frame?.style === 'rounded' && "rounded-xl",
           options.frame?.style === 'circle' && "rounded-full",
-          options.backgroundColor !== 'transparent' && "bg-white"
+          "bg-white"
         )}
         style={{
           borderColor: options.frame?.color,
-          backgroundColor: options.backgroundColor === 'transparent' ? 'transparent' : options.backgroundColor,
-          backgroundImage: options.backgroundColor === 'transparent' 
-            ? 'linear-gradient(45deg, #f0f0f0 25%, transparent 25%, transparent 75%, #f0f0f0 75%, #f0f0f0), linear-gradient(45deg, #f0f0f0 25%, transparent 25%, transparent 75%, #f0f0f0 75%, #f0f0f0)' 
-            : 'none',
-          backgroundSize: '20px 20px',
-          backgroundPosition: '0 0, 10px 10px'
+          backgroundColor: options.backgroundColor
         }}
       >
         <Image

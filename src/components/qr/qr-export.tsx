@@ -17,15 +17,14 @@ export function QRExport({ dataURL }: QRExportProps) {
   const [exportOptions, setExportOptions] = useState<ExportOptions>({
     format: 'png',
     size: 512,
-    quality: 0.9,
-    transparent: false
+    quality: 0.9
   })
   const [filename, setFilename] = useState('qrcode')
   const [isExporting, setIsExporting] = useState(false)
   const { toast } = useToast()
 
   const exportFormats = [
-    { id: 'png', name: 'PNG', icon: Image, description: 'High quality with transparency support' },
+    { id: 'png', name: 'PNG', icon: Image, description: 'High quality image format' },
     { id: 'jpg', name: 'JPG', icon: FileImage, description: 'Compressed format, smaller file size' },
     { id: 'svg', name: 'SVG', icon: FileText, description: 'Vector format, scalable' },
     // { id: 'pdf', name: 'PDF', icon: FileText, description: 'Document format' },
@@ -62,15 +61,13 @@ export function QRExport({ dataURL }: QRExportProps) {
     // Update the current format in export options
     setExportOptions(prev => ({
       ...prev,
-      format,
-      transparent: format === 'png' ? prev.transparent : false
+      format
     }))
     
     const quickOptions: ExportOptions = {
       format,
       size: exportOptions.size,
-      quality: 0.9,
-      transparent: format === 'png' && exportOptions.transparent
+      quality: 0.9
     }
     
     setIsExporting(true)
@@ -143,24 +140,6 @@ export function QRExport({ dataURL }: QRExportProps) {
             />
           </div>
         </div>
-
-        {exportOptions.format === 'png' && (
-          <div className="flex items-center space-x-2">
-            <input
-              type="checkbox"
-              id="transparent"
-              checked={exportOptions.transparent}
-              onChange={(e) => setExportOptions(prev => ({ 
-                ...prev, 
-                transparent: e.target.checked 
-              }))}
-              className="rounded"
-            />
-            <label htmlFor="transparent" className="text-sm">
-              Transparent background
-            </label>
-          </div>
-        )}
 
         <div>
           <label className="text-sm font-medium block mb-2">Filename</label>

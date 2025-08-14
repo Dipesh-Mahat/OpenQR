@@ -63,7 +63,7 @@ export class QRCodeGenerator {
       width: options.size,
       color: {
         dark: options.foregroundColor,
-        light: options.backgroundColor === 'transparent' ? '#ffffff' : options.backgroundColor,
+        light: options.backgroundColor,
       },
     }
     
@@ -76,12 +76,12 @@ export class QRCodeGenerator {
       // Generate QR code as data URL
       const dataURL: string = await QRCodeLib.toDataURL(options.text, qrOptions)
       
-      // If no gradient is set and no transparent background, return the basic QR code
-      if (!options.gradient && options.backgroundColor !== 'transparent') {
+      // If no gradient is set, return the basic QR code
+      if (!options.gradient) {
         return dataURL
       }
       
-      // For gradient QR codes or transparent backgrounds, we need to apply via canvas
+      // For gradient QR codes, we need to apply via canvas
       const canvas = document.createElement('canvas')
       const ctx = canvas.getContext('2d')
       if (!ctx) return dataURL // Fallback if canvas is not supported
@@ -117,11 +117,8 @@ export class QRCodeGenerator {
         return new Promise<string>((resolve, reject) => {
           const img = new Image()
           img.onload = () => {
-            // For transparent background, don't fill the background
-            if (options.backgroundColor !== 'transparent') {
-              ctx.fillStyle = options.backgroundColor
-              ctx.fillRect(0, 0, options.size, options.size)
-            }
+            ctx.fillStyle = options.backgroundColor
+            ctx.fillRect(0, 0, options.size, options.size)
             
             // Draw QR code
             ctx.drawImage(img, 0, 0, options.size, options.size)
@@ -135,30 +132,6 @@ export class QRCodeGenerator {
             ctx.globalCompositeOperation = 'source-over'
             
             resolve(canvas.toDataURL())
-          }
-          img.onerror = reject
-          img.src = dataURL
-        })
-      } else if (options.backgroundColor === 'transparent') {
-        // Handle transparent background without gradient
-        return new Promise<string>((resolve, reject) => {
-          const img = new Image()
-          img.onload = () => {
-            // Set canvas to have transparent background
-            ctx.clearRect(0, 0, options.size, options.size)
-            
-            // Draw QR code
-            ctx.drawImage(img, 0, 0, options.size, options.size)
-            
-            // Make white parts transparent
-            ctx.globalCompositeOperation = 'destination-in'
-            ctx.fillStyle = 'black'
-            ctx.drawImage(img, 0, 0, options.size, options.size)
-            
-            // Reset composite operation
-            ctx.globalCompositeOperation = 'source-over'
-            
-            resolve(canvas.toDataURL('image/png'))
           }
           img.onerror = reject
           img.src = dataURL
@@ -179,7 +152,7 @@ export class QRCodeGenerator {
       width: options.size,
       color: {
         dark: options.foregroundColor,
-        light: options.backgroundColor === 'transparent' ? '#ffffff' : options.backgroundColor,
+        light: options.backgroundColor,
       },
       type: 'svg'
     }
@@ -218,11 +191,6 @@ export class QRCodeGenerator {
       qrImage.crossOrigin = 'anonymous'
       
       qrImage.onload = () => {
-        // For transparent background, don't fill the canvas first
-        if (options.backgroundColor === 'transparent') {
-          ctx.clearRect(0, 0, options.size, options.size)
-        }
-        
         ctx.drawImage(qrImage, 0, 0, options.size, options.size)
 
         if (options.logoUrl && options.logoSize) {
@@ -269,14 +237,9 @@ export class QRCodeGenerator {
         canvas.width = exportOptions.size
         canvas.height = exportOptions.size
 
-        // If transparent option is set, don't fill the background
-        if (!exportOptions.transparent) {
-          ctx.fillStyle = '#ffffff'
-          ctx.fillRect(0, 0, exportOptions.size, exportOptions.size)
-        } else {
-          // Ensure canvas is cleared for transparent background
-          ctx.clearRect(0, 0, exportOptions.size, exportOptions.size)
-        }
+        // Fill background with white
+        ctx.fillStyle = '#ffffff'
+        ctx.fillRect(0, 0, exportOptions.size, exportOptions.size)
 
         ctx.drawImage(img, 0, 0, exportOptions.size, exportOptions.size)
 

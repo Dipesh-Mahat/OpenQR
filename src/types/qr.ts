@@ -66,7 +66,6 @@ export interface ExportOptions {
   format: 'png' | 'svg' | 'pdf' | 'jpg'
   size: number
   quality?: number
-  transparent?: boolean
 }
 
 export interface BulkQRItem {
