@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { useTheme } from '@/components/providers/theme-provider'
-import { Menu, X, Sun, Moon, Github, Heart } from 'lucide-react'
+import { Menu, X, Sun, Moon, Github } from 'lucide-react'
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -56,16 +56,6 @@ export function Header() {
               <Github className="h-4 w-4" />
             </a>
 
-            <a
-              href="https://github.com/sponsors/Dipesh-Mahat"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hidden sm:inline-flex h-9 items-center justify-center rounded-md bg-primary px-3 text-xs font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-            >
-              <Heart className="h-3 w-3 text-red-500 mr-2" />
-              Support Us
-            </a>
-
             {/* Mobile Menu Button */}
             <Button
               variant="ghost"
@@ -106,15 +96,6 @@ export function Header() {
                   className="inline-flex h-10 w-10 items-center justify-center rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
                 >
                   <Github className="h-4 w-4" />
-                </a>
-                <a
-                  href="https://github.com/sponsors/Dipesh-Mahat"
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="inline-flex h-9 items-center justify-center rounded-md bg-primary px-3 text-xs font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-                >
-                  <Heart className="h-3 w-3 text-red-500 mr-2" />
-                  Support Us
                 </a>
               </div>
             </nav>

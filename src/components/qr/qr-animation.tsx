@@ -98,9 +98,10 @@ export function QRAnimation({ options, onChange }: QRAnimationProps) {
       } else if (type === 'pattern-morph') {
         newIntervalId = setInterval(() => {
           const pattern = patternPresets[currentIndex]
+          // Using type assertion to handle custom property
           updateOptions({
-            pattern: pattern as any
-          })
+            ...(pattern ? { pattern } : {})
+          } as any)
           currentIndex = (currentIndex + 1) % patternPresets.length
         }, animationSpeed)
       } else if (type === 'gradient-shift') {
