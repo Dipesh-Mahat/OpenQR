@@ -3,6 +3,7 @@ export interface QRCodeOptions {
   size: number
   margin: number
   errorCorrectionLevel: 'L' | 'M' | 'Q' | 'H'
+  version?: number // QR Code version (1-40), higher values store more data
   foregroundColor: string
   backgroundColor: string
   logoUrl?: string

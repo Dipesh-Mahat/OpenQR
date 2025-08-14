@@ -42,14 +42,20 @@ export function QRPreview({ dataURL, isGenerating, options }: QRPreviewProps) {
     <div className="flex items-center justify-center p-8">
       <div 
         className={cn(
-          "qr-preview bg-white p-4 rounded-lg shadow-lg",
+          "qr-preview p-4 rounded-lg shadow-lg",
           options.frame && "border-4",
           options.frame?.style === 'rounded' && "rounded-xl",
-          options.frame?.style === 'circle' && "rounded-full"
+          options.frame?.style === 'circle' && "rounded-full",
+          options.backgroundColor !== 'transparent' && "bg-white"
         )}
         style={{
           borderColor: options.frame?.color,
-          backgroundColor: options.backgroundColor
+          backgroundColor: options.backgroundColor === 'transparent' ? 'transparent' : options.backgroundColor,
+          backgroundImage: options.backgroundColor === 'transparent' 
+            ? 'linear-gradient(45deg, #f0f0f0 25%, transparent 25%, transparent 75%, #f0f0f0 75%, #f0f0f0), linear-gradient(45deg, #f0f0f0 25%, transparent 25%, transparent 75%, #f0f0f0 75%, #f0f0f0)' 
+            : 'none',
+          backgroundSize: '20px 20px',
+          backgroundPosition: '0 0, 10px 10px'
         }}
       >
         <Image

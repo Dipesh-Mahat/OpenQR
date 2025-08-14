@@ -20,6 +20,7 @@ export function QRGenerator() {
     size: 300,
     margin: 4,
     errorCorrectionLevel: 'M',
+    version: undefined, // Auto version selection by default
     foregroundColor: '#000000',
     backgroundColor: '#ffffff',
     cornerSquareStyle: 'square',
@@ -27,6 +28,8 @@ export function QRGenerator() {
   })
   const [qrCodeDataURL, setQRCodeDataURL] = useState<string>('')
   const [isGenerating, setIsGenerating] = useState(false)
+  const [capacityUsage, setCapacityUsage] = useState<number>(0)
+  const [errorMessage, setErrorMessage] = useState<string>('')
   const [history, setHistory] = useState<Array<{ id: string; text: string; dataURL: string; timestamp: number }>>([])
   const { toast } = useToast()
 
@@ -36,17 +39,33 @@ export function QRGenerator() {
       // Only generate if we have form data
       if (!formData || !formData.text || formData.text.trim() === '') {
         setQRCodeDataURL('')
+        setCapacityUsage(0)
+        setErrorMessage('')
         return
       }
 
       try {
         setIsGenerating(true)
+        setErrorMessage('')
         const qrText = formData.text
         
         // Validate QR text
         if (!qrText || !qrText.trim()) {
           setQRCodeDataURL('')
+          setCapacityUsage(0)
           return
+        }
+
+        // Calculate capacity usage
+        const usage = QRCodeGenerator.estimateCapacityUsage(
+          qrText, 
+          qrOptions.errorCorrectionLevel as 'L' | 'M' | 'Q' | 'H'
+        )
+        setCapacityUsage(usage)
+
+        // Check if data might exceed capacity (warning at 95%)
+        if (usage > 95 && !qrOptions.version) {
+          setErrorMessage('Content size approaching maximum capacity. Consider using a lower error correction level or setting a higher version.')
         }
 
         const updatedOptions = { ...qrOptions, text: qrText }
@@ -73,9 +92,10 @@ export function QRGenerator() {
       } catch (error) {
         console.error('Error generating QR code:', error)
         setQRCodeDataURL('')
+        setErrorMessage('Failed to generate QR code. Your content may be too large for a QR code.')
         toast({
           title: 'Error',
-          description: 'Failed to generate QR code. Please check your input.',
+          description: 'Failed to generate QR code. Your content may exceed the maximum capacity.',
           variant: 'destructive'
         })
       } finally {
@@ -160,6 +180,75 @@ export function QRGenerator() {
                 onChange={(e) => setFormData({ text: e.target.value })} 
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
               />
+              
+              {/* Capacity indicator */}
+              {formData.text && (
+                <div className="mt-2">
+                  <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
+                    <span>Capacity usage</span>
+                    <span>{Math.round(capacityUsage)}%</span>
+                  </div>
+                  <div className="h-1.5 w-full bg-gray-200 rounded-full overflow-hidden">
+                    <div 
+                      className={`h-full ${
+                        capacityUsage > 90 ? 'bg-red-500' : 
+                        capacityUsage > 70 ? 'bg-yellow-500' : 
+                        'bg-green-500'
+                      }`} 
+                      style={{ width: `${Math.min(100, capacityUsage)}%` }}
+                    ></div>
+                  </div>
+                  {errorMessage && (
+                    <p className="text-xs text-red-500 mt-1">{errorMessage}</p>
+                  )}
+                </div>
+              )}
+              
+              {/* Advanced options */}
+              <details className="mt-2">
+                <summary className="text-sm font-medium cursor-pointer">Advanced options</summary>
+                <div className="mt-3 space-y-3 p-3 border rounded-md">
+                  <div>
+                    <label className="text-sm font-medium mb-1 block">Error Correction Level</label>
+                    <select
+                      value={qrOptions.errorCorrectionLevel}
+                      onChange={(e) => setQROptions(prev => ({ 
+                        ...prev, 
+                        errorCorrectionLevel: e.target.value as 'L' | 'M' | 'Q' | 'H' 
+                      }))}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                    >
+                      <option value="L">Low (7% - Maximum data capacity)</option>
+                      <option value="M">Medium (15% - Default)</option>
+                      <option value="Q">Quartile (25% - Better scan reliability)</option>
+                      <option value="H">High (30% - Best scan reliability)</option>
+                    </select>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Lower correction levels allow more data but reduce scan reliability.
+                    </p>
+                  </div>
+                  
+                  <div>
+                    <label className="text-sm font-medium mb-1 block">QR Code Version (1-40)</label>
+                    <select
+                      value={qrOptions.version || ''}
+                      onChange={(e) => setQROptions(prev => ({ 
+                        ...prev, 
+                        version: e.target.value ? Number(e.target.value) : undefined
+                      }))}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                    >
+                      <option value="">Auto (recommended)</option>
+                      {Array.from({ length: 40 }, (_, i) => i + 1).map(v => (
+                        <option key={v} value={v}>Version {v} {v >= 25 ? '(large)' : ''}</option>
+                      ))}
+                    </select>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Higher versions can store more data but create larger QR codes that may be harder to scan.
+                    </p>
+                  </div>
+                </div>
+              </details>
             </div>
           </CardContent>
         </Card>

@@ -48,6 +48,7 @@ export function QRCustomization({ options, onChange }: QRCustomizationProps) {
     { name: 'Sunset', fg: '#be185d', bg: '#ffe4e6' },
     { name: 'Forest', fg: '#166534', bg: '#d1fae5' },
     { name: 'Midnight', fg: '#312e81', bg: '#e0e7ff' },
+    { name: 'Transparent', fg: '#000000', bg: 'transparent' },
   ]
   
   const gradientPresets = [
@@ -178,16 +179,35 @@ export function QRCustomization({ options, onChange }: QRCustomizationProps) {
                   <div className="flex gap-2">
                     <Input
                       type="color"
-                      value={options.backgroundColor}
+                      value={options.backgroundColor === 'transparent' ? '#ffffff' : options.backgroundColor}
                       onChange={(e) => updateOptions({ backgroundColor: e.target.value })}
                       className="w-16 h-10 p-1"
+                      disabled={options.backgroundColor === 'transparent'}
                     />
                     <Input
                       type="text"
-                      value={options.backgroundColor}
+                      value={options.backgroundColor === 'transparent' ? 'transparent' : options.backgroundColor}
                       onChange={(e) => updateOptions({ backgroundColor: e.target.value })}
                       placeholder="#ffffff"
+                      disabled={options.backgroundColor === 'transparent'}
                     />
+                  </div>
+                  <div className="flex items-center gap-2 mt-2">
+                    <input
+                      type="checkbox"
+                      id="transparent-bg"
+                      checked={options.backgroundColor === 'transparent'}
+                      onChange={(e) => {
+                        updateOptions({ 
+                          backgroundColor: e.target.checked ? 'transparent' : '#ffffff',
+                          gradient: undefined
+                        })
+                      }}
+                      className="rounded"
+                    />
+                    <label htmlFor="transparent-bg" className="text-sm">
+                      Transparent background
+                    </label>
                   </div>
                 </div>
               </div>
