@@ -6,18 +6,14 @@ import Image from 'next/image'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { QRPreview } from './qr-preview'
-import { QRTypeSelector } from './qr-type-selector'
-import { QRFormFields } from './qr-form-fields'
 import { QRCustomization } from './qr-customization'
 import { QRExport } from './qr-export'
 import { QRCodeGenerator } from '@/lib/qr-generator'
 import { QRCodeOptions } from '@/types/qr'
-import { generateQRText } from '@/lib/qr-types'
 import { useToast } from '@/components/ui/toaster'
 import { Download, Share2, Copy, History } from 'lucide-react'
 
 export function QRGenerator() {
-  const [selectedType, setSelectedType] = useState('url')
   const [formData, setFormData] = useState<Record<string, string>>({})
   const [qrOptions, setQROptions] = useState<QRCodeOptions>({
     text: '',
@@ -31,21 +27,21 @@ export function QRGenerator() {
   })
   const [qrCodeDataURL, setQRCodeDataURL] = useState<string>('')
   const [isGenerating, setIsGenerating] = useState(false)
-  const [history, setHistory] = useState<Array<{ id: string; type: string; text: string; dataURL: string; timestamp: number }>>([])
+  const [history, setHistory] = useState<Array<{ id: string; text: string; dataURL: string; timestamp: number }>>([])
   const { toast } = useToast()
 
   // Generate QR code when data changes
   useEffect(() => {
     const generateQR = async () => {
       // Only generate if we have form data
-      if (!formData || Object.keys(formData).length === 0) {
+      if (!formData || !formData.text || formData.text.trim() === '') {
         setQRCodeDataURL('')
         return
       }
 
       try {
         setIsGenerating(true)
-        const qrText = generateQRText(selectedType, formData)
+        const qrText = formData.text
         
         // Validate QR text
         if (!qrText || !qrText.trim()) {
@@ -68,7 +64,6 @@ export function QRGenerator() {
         if (dataURL) {
           const historyItem = {
             id: Date.now().toString(),
-            type: selectedType,
             text: qrText,
             dataURL,
             timestamp: Date.now()
@@ -91,7 +86,7 @@ export function QRGenerator() {
     // Debounce QR generation to prevent excessive calls
     const timeoutId = setTimeout(generateQR, 300)
     return () => clearTimeout(timeoutId)
-  }, [formData, selectedType, qrOptions, toast])
+  }, [formData, qrOptions, toast])
 
   const handleCopyToClipboard = async () => {
     try {
@@ -136,9 +131,8 @@ export function QRGenerator() {
   }
 
   const loadFromHistory = (item: typeof history[0]) => {
-    setSelectedType(item.type)
+    setFormData({ text: item.text })
     setQRCodeDataURL(item.dataURL)
-    // You might want to parse the QR text back to form data
     toast({
       title: 'Loaded',
       description: 'QR code loaded from history!'
@@ -157,16 +151,16 @@ export function QRGenerator() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <QRTypeSelector
-              selectedType={selectedType}
-              onTypeChange={setSelectedType}
-            />
-            
-            <QRFormFields
-              type={selectedType}
-              data={formData}
-              onChange={setFormData}
-            />
+            <div className="space-y-4">
+              <label className="text-sm font-medium mb-3 block">Enter content for QR code</label>
+              <input 
+                type="text" 
+                placeholder="Enter text, URL, or any content for your QR code" 
+                value={formData.text || ''} 
+                onChange={(e) => setFormData({ text: e.target.value })} 
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+            </div>
           </CardContent>
         </Card>
 
@@ -238,7 +232,6 @@ export function QRGenerator() {
             <CardContent>
               <QRExport
                 dataURL={qrCodeDataURL}
-                options={qrOptions}
               />
             </CardContent>
           </Card>
@@ -268,7 +261,7 @@ export function QRGenerator() {
                       className="w-full h-20 object-contain"
                     />
                     <p className="text-xs text-muted-foreground mt-1 truncate">
-                      {item.type}
+                      {item.text.length > 20 ? item.text.substring(0, 20) + '...' : item.text}
                     </p>
                   </button>
                 ))}

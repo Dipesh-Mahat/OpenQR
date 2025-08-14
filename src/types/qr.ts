@@ -43,24 +43,6 @@ export interface QRCodeOptions {
   }
 }
 
-export interface QRType {
-  id: string
-  name: string
-  icon: string
-  description: string
-  fields: QRField[]
-}
-
-export interface QRField {
-  name: string
-  label: string
-  type: 'text' | 'email' | 'tel' | 'url' | 'textarea' | 'select' | 'checkbox'
-  placeholder?: string
-  required?: boolean
-  options?: string[]
-  validation?: (value: string) => string | null
-}
-
 export interface QRTemplate {
   id: string
   name: string
