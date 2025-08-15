@@ -153,45 +153,6 @@ export class QRCodeGenerator {
     }
   }
 
-  static async generateSVG(options: QRCodeOptions): Promise<string> {
-    interface QROptions {
-      errorCorrectionLevel: 'L' | 'M' | 'Q' | 'H';
-      margin: number;
-      width: number;
-      color: {
-        dark: string;
-        light: string;
-      };
-      type: string;
-      version?: number;
-    }
-    
-    const qrOptions: QROptions = {
-      errorCorrectionLevel: options.errorCorrectionLevel,
-      margin: options.margin,
-      width: options.size,
-      color: {
-        dark: options.foregroundColor,
-        light: options.backgroundColor,
-      },
-      type: 'svg'
-    }
-    
-    // Set version if specified
-    if (options.version) {
-      qrOptions.version = options.version
-    }
-
-    try {
-      // Need to cast to unknown first since the library types don't match our interface exactly
-      const svg = await QRCodeLib.toString(options.text, qrOptions as unknown as QRLibOptions)
-      return svg
-    } catch (error) {
-      console.error('Error generating SVG QR code:', error)
-      throw new Error('Failed to generate SVG QR code')
-    }
-  }
-
   static async generateWithLogo(options: QRCodeOptions): Promise<string> {
     // Force high error correction for logo
     const highErrorOptions = { ...options, errorCorrectionLevel: 'H' as const }
@@ -247,37 +208,6 @@ export class QRCodeGenerator {
     exportOptions: ExportOptions,
     filename: string
   ): Promise<void> {
-    // For SVG exports, we need a different approach
-    if (exportOptions.format === 'svg') {
-      try {
-        // Create a QR code options object
-        const qrText = this.extractTextFromDataURL(dataURL);
-        
-        const qrOptions: QRCodeOptions = {
-          text: qrText,
-          size: exportOptions.size,
-          margin: 4,
-          errorCorrectionLevel: 'M',
-          foregroundColor: '#000000',
-          backgroundColor: '#ffffff',
-          cornerSquareStyle: 'square',
-          cornerDotStyle: 'square'
-        };
-        
-        // Generate SVG content directly
-        const svgContent = await this.generateSVG(qrOptions);
-        
-        // Create a blob with the SVG content and download it
-        const svgBlob = new Blob([svgContent], { type: 'image/svg+xml' });
-        const url = URL.createObjectURL(svgBlob);
-        this.downloadFile(url, `${filename}.svg`);
-      } catch (error) {
-        console.error('Error exporting SVG:', error);
-        throw new Error('Failed to export SVG QR code');
-      }
-      return;
-    }
-    
     // For PNG/JPG exports, use the canvas approach
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
@@ -310,22 +240,6 @@ export class QRCodeGenerator {
       img.onerror = reject;
       img.src = dataURL;
     });
-  }
-
-  // Helper method to extract text from a data URL
-  private static extractTextFromDataURL(dataURL: string): string {
-    try {
-      // For data URLs, just return a placeholder text
-      if (dataURL.startsWith('data:')) {
-        return 'Generated QR Code';
-      }
-      
-      // For URLs or other content, use it directly
-      return dataURL;
-    } catch (e) {
-      console.warn('Could not extract text from data URL:', e);
-      return 'Generated QR Code';
-    }
   }
 
   private static downloadFile(url: string, filename: string) {

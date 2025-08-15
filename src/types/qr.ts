@@ -53,7 +53,7 @@ export interface AnalyticsData {
 }
 
 export interface ExportOptions {
-  format: 'png' | 'svg' | 'pdf' | 'jpg'
+  format: 'png' | 'jpg'
   size: number
   quality?: number
 }

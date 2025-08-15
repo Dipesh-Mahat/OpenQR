@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { QRCodeGenerator } from '@/lib/qr-generator'
 import { useToast } from '@/components/ui/toaster'
-import { Download, FileImage, FileText, Image } from 'lucide-react'
+import { Download, FileImage, Image } from 'lucide-react'
 
 interface QRExportProps {
   dataURL: string
@@ -26,8 +26,6 @@ export function QRExport({ dataURL }: QRExportProps) {
   const exportFormats = [
     { id: 'png', name: 'PNG', icon: Image, description: 'High quality image format' },
     { id: 'jpg', name: 'JPG', icon: FileImage, description: 'Compressed format, smaller file size' },
-    { id: 'svg', name: 'SVG', icon: FileText, description: 'Vector format, scalable' },
-    // { id: 'pdf', name: 'PDF', icon: FileText, description: 'Document format' },
   ]
 
   const exportSizes = [
@@ -57,7 +55,7 @@ export function QRExport({ dataURL }: QRExportProps) {
     }
   }
 
-  const quickExport = async (format: 'png' | 'svg' | 'jpg') => {
+  const quickExport = async (format: 'png' | 'jpg') => {
     // Update the current format in export options
     setExportOptions(prev => ({
       ...prev,
@@ -97,7 +95,7 @@ export function QRExport({ dataURL }: QRExportProps) {
             <Button
               key={format.id}
               variant="outline"
-              onClick={() => quickExport(format.id as 'png' | 'svg' | 'jpg')}
+              onClick={() => quickExport(format.id as 'png' | 'jpg')}
               disabled={isExporting}
               className="flex flex-col items-center gap-1 h-auto py-3"
             >
