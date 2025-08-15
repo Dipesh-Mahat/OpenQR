@@ -18,14 +18,6 @@ export const metadata: Metadata = {
     description: 'Create beautiful, customizable QR codes instantly.',
     url: 'https://dipesh-mahat.github.io/OpenQR',
     siteName: 'OpenQR',
-    images: [
-      {
-        url: '/OpenQR/og-image.png',
-        width: 1200,
-        height: 630,
-        alt: 'OpenQR - The Best QR Code Generator',
-      },
-    ],
     locale: 'en_US',
     type: 'website',
   },
@@ -33,7 +25,6 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'OpenQR - The Best QR Code Generator',
     description: 'Create beautiful, customizable QR codes instantly.',
-    images: ['/OpenQR/og-image.png'],
   },
   icons: {
     icon: '/OpenQR/favicon.ico',

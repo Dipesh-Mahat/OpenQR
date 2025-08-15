@@ -1,7 +1,5 @@
 # OpenQR - Modern QR Code Generator
 
-![OpenQR Banner](https://via.placeholder.com/1200x300/2563eb/ffffff?text=OpenQR+-+Modern+QR+Code+Generator)
-
 > A clean, feature-rich, open-source QR code generator with custom styling and advanced features.
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
@@ -45,8 +43,8 @@
 
 1. Clone the repository
 ```bash
-git clone https://github.com/yourusername/openqr.git
-cd openqr
+git clone https://github.com/Dipesh-Mahat/OpenQR.git
+cd OpenQR
 ```
 
 2. Install dependencies
@@ -68,26 +66,48 @@ yarn dev
 ## Tech Stack
 
 - **Framework:** Next.js 15 with App Router
-- **Language:** TypeScript
-- **Styling:** Tailwind CSS
+- **Language:** TypeScript with strict configuration
+- **Styling:** Tailwind CSS with custom components
 - **QR Generation:** qrcode library with html2canvas for exports
-- **Build Tool:** Turbopack
+- **Deployment:** GitHub Pages (static export)
+- **CI/CD:** GitHub Actions for automated deployment
 
 ## Project Structure
 
 ```
-openqr/
+OpenQR/
 ├── src/
 │   ├── app/                  # Next.js app directory
+│   │   ├── privacy/          # Privacy policy page
+│   │   └── terms/            # Terms of service page
 │   ├── components/           # React components
 │   │   ├── layout/           # Layout components
+│   │   ├── providers/        # Context providers
 │   │   ├── qr/               # QR generation components
 │   │   ├── sections/         # Page sections
 │   │   └── ui/               # UI components
 │   ├── lib/                  # Utility functions
 │   └── types/                # TypeScript definitions
 └── public/                   # Static assets
+    ├── protect.html          # Password protection page
+    └── smart.html            # Smart conditions handler
 ```
+
+## Deployment
+
+OpenQR is deployed using GitHub Pages for static site hosting. The deployment is automated through GitHub Actions.
+
+### Live Demo
+
+You can try the live application here: [https://dipesh-mahat.github.io/OpenQR](https://dipesh-mahat.github.io/OpenQR)
+
+### Deployment Process
+
+The application is automatically built and deployed to GitHub Pages when changes are pushed to the main branch. The GitHub Actions workflow handles:
+
+1. Building the Next.js application with static export
+2. Configuring the correct base path for GitHub Pages
+3. Deploying the built files to the gh-pages branch
 
 ## Contributing
 
@@ -98,6 +118,21 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 3. Commit your changes (`git commit -m 'Add some amazing feature'`)
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
+
+## Privacy and Security
+
+OpenQR is designed with privacy in mind:
+
+- All QR code generation happens entirely in your browser
+- No data is sent to any servers
+- Password-protected QR codes use client-side encryption
+- Smart QR code conditions are processed locally
+
+For more details, please see our [Privacy Policy](/privacy) and [Terms of Service](/terms).
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## License
 
