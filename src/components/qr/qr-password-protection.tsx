@@ -14,7 +14,7 @@ interface QRPasswordProtectionProps {
 }
 
 export function QRPasswordProtection({ options, onChange }: QRPasswordProtectionProps) {
-  const [password, setPassword] = useState('')
+  const [passwordValue, setPasswordValue] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [isProtected, setIsProtected] = useState(
@@ -23,8 +23,8 @@ export function QRPasswordProtection({ options, onChange }: QRPasswordProtection
   const [passwordError, setPasswordError] = useState('')
 
   const updateOptions = (updates: Partial<QRCodeOptions>) => {
-    // First create a copy of options without any 'password' property
-    const { password, ...optionsCopy } = options;
+    // Create a copy of options
+    const optionsCopy = { ...options };
     
     // Then merge with updates
     onChange({ ...optionsCopy, ...updates });
@@ -62,28 +62,28 @@ export function QRPasswordProtection({ options, onChange }: QRPasswordProtection
       
       updateOptions({ text: originalText });
       setIsProtected(false);
-      setPassword('');
+      setPasswordValue('');
       setConfirmPassword('');
       setPasswordError('');
     } else {
       // Validate passwords
-      if (!password) {
+      if (!passwordValue) {
         setPasswordError('Password is required');
         return;
       }
       
-      if (password !== confirmPassword) {
+      if (passwordValue !== confirmPassword) {
         setPasswordError('Passwords do not match');
         return;
       }
       
-      if (password.length < 6) {
+      if (passwordValue.length < 6) {
         setPasswordError('Password must be at least 6 characters');
         return;
       }
       
       // Hash the password for security
-      const passwordHash = await sha256(password);
+      const passwordHash = await sha256(passwordValue);
       
       // Create the protected data by combining password hash and original content
       const protectedData = `${passwordHash}:${options.text}`;
@@ -101,7 +101,7 @@ export function QRPasswordProtection({ options, onChange }: QRPasswordProtection
       setIsProtected(true);
       setPasswordError('');
     }
-  }
+  };
 
   return (
     <div className="space-y-4">
@@ -129,8 +129,8 @@ export function QRPasswordProtection({ options, onChange }: QRPasswordProtection
             <div className="relative">
               <Input
                 type={showPassword ? 'text' : 'password'}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                value={passwordValue}
+                onChange={(e) => setPasswordValue(e.target.value)}
                 placeholder="Enter password"
                 disabled={isProtected}
               />
@@ -169,7 +169,7 @@ export function QRPasswordProtection({ options, onChange }: QRPasswordProtection
                 <ul className="list-disc pl-4 space-y-1">
                   <li>The password is securely hashed and embedded in the QR code link</li>
                   <li>When scanned, users see a link to our password entry page</li>
-                  <li>After entering the correct password, they'll be redirected to your content</li>
+                  <li>After entering the correct password, they&apos;ll be redirected to your content</li>
                   <li>Works with all mobile QR scanners and provides enhanced security</li>
                 </ul>
               </div>
@@ -185,5 +185,5 @@ export function QRPasswordProtection({ options, onChange }: QRPasswordProtection
         </div>
       )}
     </div>
-  )
+  );
 }

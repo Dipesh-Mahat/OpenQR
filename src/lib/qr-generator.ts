@@ -57,7 +57,18 @@ export class QRCodeGenerator {
   }
 
   static async generateQRCode(options: QRCodeOptions): Promise<string> {
-    const qrOptions: any = {
+    interface QROptions {
+      errorCorrectionLevel: 'L' | 'M' | 'Q' | 'H';
+      margin: number;
+      width: number;
+      color: {
+        dark: string;
+        light: string;
+      };
+      version?: number;
+    }
+    
+    const qrOptions: QROptions = {
       errorCorrectionLevel: options.errorCorrectionLevel,
       margin: options.margin,
       width: options.size,
@@ -146,7 +157,19 @@ export class QRCodeGenerator {
   }
 
   static async generateSVG(options: QRCodeOptions): Promise<string> {
-    const qrOptions: any = {
+    interface QROptions {
+      errorCorrectionLevel: 'L' | 'M' | 'Q' | 'H';
+      margin: number;
+      width: number;
+      color: {
+        dark: string;
+        light: string;
+      };
+      type: string;
+      version?: number;
+    }
+    
+    const qrOptions: QROptions = {
       errorCorrectionLevel: options.errorCorrectionLevel,
       margin: options.margin,
       width: options.size,

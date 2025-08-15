@@ -5,7 +5,6 @@ import { QRCodeOptions } from '@/types/qr'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { 
-  Play, 
   Pause, 
   Sparkles,
   Palette,
@@ -98,10 +97,15 @@ export function QRAnimation({ options, onChange }: QRAnimationProps) {
       } else if (type === 'pattern-morph') {
         newIntervalId = setInterval(() => {
           const pattern = patternPresets[currentIndex]
-          // Using type assertion to handle custom property
+          // Set the pattern in the options
           updateOptions({
-            ...(pattern ? { pattern } : {})
-          } as any)
+            pattern: pattern,
+            animation: {
+              enabled: true,
+              type: 'pattern-morph',
+              speed: animationSpeed
+            }
+          })
           currentIndex = (currentIndex + 1) % patternPresets.length
         }, animationSpeed)
       } else if (type === 'gradient-shift') {

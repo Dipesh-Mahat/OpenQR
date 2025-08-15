@@ -1,14 +1,8 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
-import { ArrowDown, Sparkles, Zap, Shield } from 'lucide-react'
+import { Sparkles, Zap, Shield } from 'lucide-react'
 
 export function Hero() {
-  const scrollToGenerator = () => {
-    const generator = document.querySelector('#generator')
-    generator?.scrollIntoView({ behavior: 'smooth' })
-  }
-
   return (
     <section className="py-12 px-4">
       <div className="container mx-auto text-center">

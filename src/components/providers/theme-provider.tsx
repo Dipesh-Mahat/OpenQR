@@ -26,10 +26,8 @@ const ThemeProviderContext = createContext<ThemeProviderState>(initialState)
 
 export function ThemeProvider({
   children,
-  attribute: _attribute = 'class',
   defaultTheme = 'system',
   enableSystem = true,
-  disableTransitionOnChange: _disableTransitionOnChange = false,
   ...props
 }: ThemeProviderProps) {
   const [theme, setTheme] = useState<Theme>(defaultTheme)

@@ -4,7 +4,6 @@ import { useState } from 'react'
 import { QRCodeOptions } from '@/types/qr'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
 import { Image, Video, Film, Eye } from 'lucide-react'
 
 interface QRARViewProps {
@@ -19,7 +18,7 @@ export function QRARView({ options, onChange }: QRARViewProps) {
 
   const updateOptions = (updates: Partial<QRCodeOptions>) => {
     // First create a copy of options without any 'arContent' property
-    const { arContent, ...optionsCopy } = options;
+    const { ...optionsCopy } = options;
     
     // Then merge with updates
     onChange({ ...optionsCopy, ...updates });
@@ -92,7 +91,7 @@ export function QRARView({ options, onChange }: QRARViewProps) {
             <Button
               key={type.id}
               variant={mediaType === type.id ? 'default' : 'outline'}
-              onClick={() => setMediaType(type.id as any)}
+              onClick={() => setMediaType(type.id as 'image' | 'video' | '3d')}
               className="h-auto py-3 px-2 flex flex-col items-center gap-2"
             >
               <div className="rounded-full p-2 bg-primary/10 text-primary">
@@ -123,6 +122,7 @@ export function QRARView({ options, onChange }: QRARViewProps) {
         <div className="rounded-md bg-primary/5 p-3 text-center">
           <p className="text-sm font-medium mb-2">AR Content Preview</p>
           {mediaType === 'image' && (
+            // Consider replacing with next/image in a future update
             <img 
               src={mediaUrl} 
               alt="AR Preview" 

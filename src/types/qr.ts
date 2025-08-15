@@ -10,6 +10,7 @@ export interface QRCodeOptions {
   logoSize?: number
   cornerSquareStyle: 'square' | 'dot' | 'extra-rounded'
   cornerDotStyle: 'square' | 'dot'
+  pattern?: string
   gradient?: {
     type: 'linear' | 'radial'
     rotation: number
@@ -36,7 +37,7 @@ export interface QRCodeOptions {
   smartConditions?: {
     enabled: boolean
     type: string
-    conditions: any
+    conditions: Record<string, unknown>
   }
   password?: {
     enabled: boolean

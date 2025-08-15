@@ -8,7 +8,6 @@ import { Card, CardContent } from '@/components/ui/card'
 import { 
   Clock, 
   MapPin, 
-  User, 
   Languages,
   Sun,
   Moon
@@ -53,11 +52,11 @@ export function QRSmartConditions({ options, onChange }: QRSmartConditionsProps)
     { id: 'darkMode', name: 'Dark Mode', icon: Moon },
   ]
 
-  const updateCondition = (type: string, data: any) => {
+  const updateCondition = (conditionType: string, data: Record<string, unknown>) => {
     const newConditions = {
       ...conditions,
-      [type]: {
-        ...conditions[type as keyof typeof conditions],
+      [conditionType]: {
+        ...conditions[conditionType as keyof typeof conditions],
         ...data
       }
     }
@@ -100,7 +99,7 @@ export function QRSmartConditions({ options, onChange }: QRSmartConditionsProps)
           const data = url.searchParams.get('data');
           if (data) {
             const decodedData = atob(decodeURIComponent(data));
-            const [prefix, type, originalUrl] = decodedData.split(':');
+            const [prefix, _, originalUrl] = decodedData.split(':');
             if (prefix === 'SMART' && originalUrl) {
               updateOptions({ text: originalUrl });
             }
@@ -108,8 +107,9 @@ export function QRSmartConditions({ options, onChange }: QRSmartConditionsProps)
         } else {
           // Not a smart URL, no changes needed
         }
-      } catch (e) {
+      } catch (error) {
         // Invalid URL, no changes needed
+        console.error('Error parsing smart URL:', error);
       }
     }
   }
@@ -203,7 +203,7 @@ export function QRSmartConditions({ options, onChange }: QRSmartConditionsProps)
           {conditionType === 'darkMode' && (
             <div className="space-y-4">
               <p className="text-xs text-muted-foreground">
-                Show different content based on the user's light/dark mode preference
+                Show different content based on the user&apos;s light/dark mode preference
               </p>
               
               <div>
@@ -235,7 +235,7 @@ export function QRSmartConditions({ options, onChange }: QRSmartConditionsProps)
           {conditionType === 'location' && (
             <div className="space-y-4">
               <p className="text-xs text-muted-foreground">
-                Redirect to different URLs based on the user's country
+                Redirect to different URLs based on the user&apos;s country
               </p>
               
               <div>
@@ -278,7 +278,7 @@ export function QRSmartConditions({ options, onChange }: QRSmartConditionsProps)
           {conditionType === 'language' && (
             <div className="space-y-4">
               <p className="text-xs text-muted-foreground">
-                Redirect to different URLs based on the user's browser language
+                Redirect to different URLs based on the user&apos;s browser language
               </p>
               
               <div>
