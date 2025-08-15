@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { DonationDialog } from './donation-dialog'
 
 export function Footer() {
@@ -17,12 +18,12 @@ export function Footer() {
             </a>
           </p>
           <div className="flex items-center space-x-4 mt-4 md:mt-0">
-            <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+            <Link href="/privacy" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
               Privacy Policy
-            </a>
-            <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+            </Link>
+            <Link href="/terms" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
               Terms of Service
-            </a>
+            </Link>
             <div className="ml-4" style={{ position: 'relative' }}>
               <DonationDialog />
             </div>
