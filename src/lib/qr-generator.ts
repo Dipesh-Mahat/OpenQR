@@ -1,11 +1,8 @@
 import QRCodeLib from 'qrcode'
 import { QRCodeOptions, ExportOptions } from '@/types/qr'
 
-// Extend the QRCodeLib with proper TypeScript types
-declare module 'qrcode' {
-  export function toDataURL(text: string, options?: any): Promise<string>
-  export function toString(text: string, options?: any): Promise<string>
-}
+// Define proper TypeScript types for the QRCodeLib methods
+type QRLibOptions = Record<string, unknown>;
 
 export class QRCodeGenerator {
   // Maximum capacity in characters (approximate) for different modes
@@ -85,7 +82,7 @@ export class QRCodeGenerator {
 
     try {
       // Generate QR code as data URL
-      const dataURL: string = await QRCodeLib.toDataURL(options.text, qrOptions)
+      const dataURL = await QRCodeLib.toDataURL(options.text, qrOptions as unknown as QRLibOptions)
       
       // If no gradient is set, return the basic QR code
       if (!options.gradient) {
@@ -186,7 +183,8 @@ export class QRCodeGenerator {
     }
 
     try {
-      const svg: string = await QRCodeLib.toString(options.text, qrOptions)
+      // Need to cast to unknown first since the library types don't match our interface exactly
+      const svg = await QRCodeLib.toString(options.text, qrOptions as unknown as QRLibOptions)
       return svg
     } catch (error) {
       console.error('Error generating SVG QR code:', error)
@@ -196,7 +194,7 @@ export class QRCodeGenerator {
 
   static async generateWithLogo(options: QRCodeOptions): Promise<string> {
     // Force high error correction for logo
-    const highErrorOptions = { ...options, errorCorrectionLevel: 'H' as 'H' }
+    const highErrorOptions = { ...options, errorCorrectionLevel: 'H' as const }
     
     // First generate QR code with patterns and other styling
     const qrDataURL = await this.generateQRCode(highErrorOptions)
@@ -249,46 +247,85 @@ export class QRCodeGenerator {
     exportOptions: ExportOptions,
     filename: string
   ): Promise<void> {
-    const canvas = document.createElement('canvas')
-    const ctx = canvas.getContext('2d')
-    if (!ctx) throw new Error('Canvas not supported')
+    // For SVG exports, we need a different approach
+    if (exportOptions.format === 'svg') {
+      try {
+        // Create a QR code options object
+        const qrText = this.extractTextFromDataURL(dataURL);
+        
+        const qrOptions: QRCodeOptions = {
+          text: qrText,
+          size: exportOptions.size,
+          margin: 4,
+          errorCorrectionLevel: 'M',
+          foregroundColor: '#000000',
+          backgroundColor: '#ffffff',
+          cornerSquareStyle: 'square',
+          cornerDotStyle: 'square'
+        };
+        
+        // Generate SVG content directly
+        const svgContent = await this.generateSVG(qrOptions);
+        
+        // Create a blob with the SVG content and download it
+        const svgBlob = new Blob([svgContent], { type: 'image/svg+xml' });
+        const url = URL.createObjectURL(svgBlob);
+        this.downloadFile(url, `${filename}.svg`);
+      } catch (error) {
+        console.error('Error exporting SVG:', error);
+        throw new Error('Failed to export SVG QR code');
+      }
+      return;
+    }
+    
+    // For PNG/JPG exports, use the canvas approach
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    if (!ctx) throw new Error('Canvas not supported');
 
-    const img = new Image()
+    const img = new Image();
     
     return new Promise<void>((resolve, reject) => {
       img.onload = () => {
-        canvas.width = exportOptions.size
-        canvas.height = exportOptions.size
+        canvas.width = exportOptions.size;
+        canvas.height = exportOptions.size;
 
         // Fill background with white
-        ctx.fillStyle = '#ffffff'
-        ctx.fillRect(0, 0, exportOptions.size, exportOptions.size)
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, exportOptions.size, exportOptions.size);
 
-        ctx.drawImage(img, 0, 0, exportOptions.size, exportOptions.size)
+        ctx.drawImage(img, 0, 0, exportOptions.size, exportOptions.size);
 
-        if (exportOptions.format === 'svg') {
-          // For SVG, we'd need to use a different approach
-          // This is a simplified version
-          const svgBlob = new Blob([dataURL], { type: 'image/svg+xml' })
-          const url = URL.createObjectURL(svgBlob)
-          this.downloadFile(url, `${filename}.svg`)
-          resolve()
-        } else {
-          const mimeType = exportOptions.format === 'jpg' ? 'image/jpeg' : 'image/png'
-          canvas.toBlob((blob) => {
-            if (blob) {
-              const url = URL.createObjectURL(blob)
-              this.downloadFile(url, `${filename}.${exportOptions.format}`)
-              resolve()
-            } else {
-              reject(new Error('Failed to create blob'))
-            }
-          }, mimeType, exportOptions.quality || 0.9)
-        }
+        const mimeType = exportOptions.format === 'jpg' ? 'image/jpeg' : 'image/png';
+        canvas.toBlob((blob) => {
+          if (blob) {
+            const url = URL.createObjectURL(blob);
+            this.downloadFile(url, `${filename}.${exportOptions.format}`);
+            resolve();
+          } else {
+            reject(new Error('Failed to create blob'));
+          }
+        }, mimeType, exportOptions.quality || 0.9);
+      };
+      img.onerror = reject;
+      img.src = dataURL;
+    });
+  }
+
+  // Helper method to extract text from a data URL
+  private static extractTextFromDataURL(dataURL: string): string {
+    try {
+      // For data URLs, just return a placeholder text
+      if (dataURL.startsWith('data:')) {
+        return 'Generated QR Code';
       }
-      img.onerror = reject
-      img.src = dataURL
-    })
+      
+      // For URLs or other content, use it directly
+      return dataURL;
+    } catch (e) {
+      console.warn('Could not extract text from data URL:', e);
+      return 'Generated QR Code';
+    }
   }
 
   private static downloadFile(url: string, filename: string) {

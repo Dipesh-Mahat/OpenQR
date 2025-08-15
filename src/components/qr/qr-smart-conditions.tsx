@@ -101,7 +101,7 @@ export function QRSmartConditions({ options, onChange }: QRSmartConditionsProps)
           const data = url.searchParams.get('data');
           if (data) {
             const decodedData = atob(decodeURIComponent(data));
-            const [prefix, _, originalUrl] = decodedData.split(':');
+            const [prefix, , originalUrl] = decodedData.split(':');
             if (prefix === 'SMART' && originalUrl) {
               updateOptions({ text: originalUrl });
             }

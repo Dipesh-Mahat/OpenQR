@@ -22,18 +22,7 @@ export interface QRCodeOptions {
     text?: string
     textColor?: string
   }
-  // New features
-  animation?: {
-    enabled: boolean
-    type: 'color-pulse' | 'gradient-shift' | 'pattern-morph'
-    speed: number
-  }
-  arContent?: {
-    enabled: boolean
-    type: 'image' | 'video' | '3d'
-    url: string
-    displayMode: 'popup' | 'fullscreen' | 'embedded'
-  }
+  // Advanced features
   smartConditions?: {
     enabled: boolean
     type: string

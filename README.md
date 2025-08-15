@@ -16,20 +16,7 @@
 - Frame options with custom text
 - Advanced error correction levels
 
-### QR Code Types
-- Website URLs
-- Email with subject and body
-- Phone numbers with direct calling
-- SMS messages
-- WiFi network credentials
-- Contact cards (vCard)
-- Geographic locations
-- Calendar events
-- Plain text
-
 ### Advanced Features
-- Animated QR codes with color and pattern transitions
-- Augmented reality content linking
 - Smart conditional QR codes (time, location, language)
 - Password-protected QR codes
 

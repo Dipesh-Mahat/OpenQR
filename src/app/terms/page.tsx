@@ -51,7 +51,7 @@ export default function TermsOfService() {
 
         <h2 className="text-2xl font-semibold mt-8 mb-4">No Warranty</h2>
         <p>
-          The service is provided "as is" and "as available" without warranties of any kind, either express or implied. 
+          The service is provided &quot;as is&quot; and &quot;as available&quot; without warranties of any kind, either express or implied. 
           We do not warrant that:
         </p>
         <ul className="list-disc pl-8 my-4 space-y-2">
@@ -71,7 +71,7 @@ export default function TermsOfService() {
           <li>Your use or inability to use the service</li>
           <li>Any changes made to the service</li>
           <li>Unauthorized access to or alteration of your data</li>
-          <li>Any third party's conduct or content accessed through the service</li>
+          <li>Any third party&apos;s conduct or content accessed through the service</li>
         </ul>
 
         <h2 className="text-2xl font-semibold mt-8 mb-4">Indemnification</h2>
@@ -84,7 +84,7 @@ export default function TermsOfService() {
         <h2 className="text-2xl font-semibold mt-8 mb-4">Changes to Terms</h2>
         <p>
           We reserve the right to modify these Terms at any time. We will provide notice of any material changes by updating the 
-          "Last Updated" date. Your continued use of OpenQR after such modifications constitutes your acceptance of the revised Terms.
+          &quot;Last Updated&quot; date. Your continued use of OpenQR after such modifications constitutes your acceptance of the revised Terms.
         </p>
 
         <h2 className="text-2xl font-semibold mt-8 mb-4">Contact Information</h2>

@@ -22,18 +22,18 @@ export default function PrivacyPolicy() {
 
         <h2 className="text-2xl font-semibold mt-8 mb-4">No Data Collection Policy</h2>
         <p>
-          <strong>OpenQR does not collect, store, or transmit any of your data.</strong> We've designed our application to work entirely within your browser:
+          <strong>OpenQR does not collect, store, or transmit any of your data.</strong> We&apos;ve designed our application to work entirely within your browser:
         </p>
         <ul className="list-disc pl-8 my-4 space-y-2">
           <li>All QR code generation happens directly in your browser</li>
           <li>The content you enter to create QR codes never leaves your device</li>
-          <li>We don't use analytics, tracking cookies, or any data collection mechanisms</li>
-          <li>We don't have servers that process or store your QR code data</li>
+          <li>We don&apos;t use analytics, tracking cookies, or any data collection mechanisms</li>
+          <li>We don&apos;t have servers that process or store your QR code data</li>
         </ul>
 
         <h2 className="text-2xl font-semibold mt-8 mb-4">Local Storage</h2>
         <p>
-          OpenQR may use your browser's local storage to save your QR code preferences and recent codes for your convenience. 
+          OpenQR may use your browser&apos;s local storage to save your QR code preferences and recent codes for your convenience. 
           This data never leaves your device and is only accessible to you when using our application on the same browser.
         </p>
 
@@ -41,7 +41,7 @@ export default function PrivacyPolicy() {
         <p>
           Our application is hosted on GitHub Pages, which may collect standard server logs including IP addresses and browser information.
           This is not within our control, but GitHub does not share this information with us. For more information, please refer to 
-          <a href="https://docs.github.com/en/site-policy/privacy-policies/github-privacy-statement" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer"> GitHub's Privacy Statement</a>.
+          <a href="https://docs.github.com/en/site-policy/privacy-policies/github-privacy-statement" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer"> GitHub&apos;s Privacy Statement</a>.
         </p>
 
         <h2 className="text-2xl font-semibold mt-8 mb-4">Security</h2>
@@ -52,7 +52,7 @@ export default function PrivacyPolicy() {
 
         <h2 className="text-2xl font-semibold mt-8 mb-4">Changes to Our Privacy Policy</h2>
         <p>
-          We may update our Privacy Policy from time to time. We will post any changes on this page with an updated "Last Updated" date.
+          We may update our Privacy Policy from time to time. We will post any changes on this page with an updated &quot;Last Updated&quot; date.
         </p>
 
         <h2 className="text-2xl font-semibold mt-8 mb-4">Contact Information</h2>
