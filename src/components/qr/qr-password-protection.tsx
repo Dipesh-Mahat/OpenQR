@@ -93,7 +93,8 @@ export function QRPasswordProtection({ options, onChange }: QRPasswordProtection
       
       // Create a URL to the protection page with the data as a query parameter
       // Use a unique ID to prevent QR scanners from seeing full content
-      const protectionUrl = `${window.location.origin}/protect.html?id=${generateId()}&data=${encodeURIComponent(base64Data)}`;
+      const basePath = window.location.pathname.includes('/OpenQR') ? '/OpenQR' : '';
+      const protectionUrl = `${window.location.origin}${basePath}/protect.html?id=${generateId()}&data=${encodeURIComponent(base64Data)}`;
       
       // Enable password protection by updating the QR code text to the protection URL
       updateOptions({ text: protectionUrl });

@@ -71,7 +71,8 @@ export function QRSmartConditions({ options, onChange }: QRSmartConditionsProps)
       
       // Encode the data and create a URL to our smart.html page
       const encodedData = encodeURIComponent(btoa(conditionData));
-      const smartUrl = `${window.location.origin}/smart.html?data=${encodedData}`;
+      const basePath = window.location.pathname.includes('/OpenQR') ? '/OpenQR' : '';
+      const smartUrl = `${window.location.origin}${basePath}/smart.html?data=${encodedData}`;
       
       updateOptions({ text: smartUrl });
     }
@@ -88,14 +89,15 @@ export function QRSmartConditions({ options, onChange }: QRSmartConditionsProps)
       
       // Encode the data and create a URL to our smart.html page
       const encodedData = encodeURIComponent(btoa(conditionData));
-      const smartUrl = `${window.location.origin}/smart.html?data=${encodedData}`;
+      const basePath = window.location.pathname.includes('/OpenQR') ? '/OpenQR' : '';
+      const smartUrl = `${window.location.origin}${basePath}/smart.html?data=${encodedData}`;
       
       updateOptions({ text: smartUrl });
     } else {
       // Try to extract the original URL from the smart URL
       try {
         const url = new URL(options.text);
-        if (url.pathname === '/smart.html') {
+        if (url.pathname.endsWith('/smart.html')) {
           const data = url.searchParams.get('data');
           if (data) {
             const decodedData = atob(decodeURIComponent(data));

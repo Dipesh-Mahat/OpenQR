@@ -7,7 +7,7 @@ import { Toaster } from '@/components/ui/toaster'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://openqr.dev'),
+  metadataBase: new URL('https://dipesh-mahat.github.io/OpenQR'),
   title: 'OpenQR - The Best QR Code Generator',
   description: 'Create beautiful, customizable QR codes instantly. Free, open-source, and feature-rich QR code generator.',
   keywords: ['QR code', 'QR generator', 'custom QR', 'beautiful QR', 'best QR generator', 'open source'],
@@ -16,11 +16,11 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'OpenQR - The Best QR Code Generator',
     description: 'Create beautiful, customizable QR codes instantly.',
-    url: 'https://openqr.dev',
+    url: 'https://dipesh-mahat.github.io/OpenQR',
     siteName: 'OpenQR',
     images: [
       {
-        url: '/og-image.png',
+        url: '/OpenQR/og-image.png',
         width: 1200,
         height: 630,
         alt: 'OpenQR - The Best QR Code Generator',
@@ -33,14 +33,14 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'OpenQR - The Best QR Code Generator',
     description: 'Create beautiful, customizable QR codes instantly.',
-    images: ['/og-image.png'],
+    images: ['/OpenQR/og-image.png'],
   },
   icons: {
-    icon: '/favicon.ico',
-    shortcut: '/favicon-16x16.png',
-    apple: '/apple-touch-icon.png',
+    icon: '/OpenQR/favicon.ico',
+    shortcut: '/OpenQR/favicon-16x16.png',
+    apple: '/OpenQR/apple-touch-icon.png',
   },
-  manifest: '/site.webmanifest',
+  manifest: '/OpenQR/site.webmanifest',
 }
 
 export default function RootLayout({
