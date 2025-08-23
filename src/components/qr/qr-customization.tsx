@@ -246,7 +246,7 @@ export function QRCustomization({ options, onChange }: QRCustomizationProps) {
                   onChange={(e) => updateOptions({ 
                     errorCorrectionLevel: e.target.value as 'L' | 'M' | 'Q' | 'H' 
                   })}
-                  className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm"
+                  className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                 >
                   <option value="L">Low (7%)</option>
                   <option value="M">Medium (15%)</option>
