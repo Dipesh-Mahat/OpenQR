@@ -92,12 +92,34 @@ export function QRGenerator() {
       } catch (error) {
         console.error('Error generating QR code:', error)
         setQRCodeDataURL('')
-        setErrorMessage('Failed to generate QR code. Your content may be too large for a QR code.')
-        toast({
-          title: 'Error',
-          description: 'Failed to generate QR code. Your content may exceed the maximum capacity.',
-          variant: 'destructive'
-        })
+        
+        // Handle specific version error
+        if (error instanceof Error && error.message.includes('cannot contain this amount of data')) {
+          const match = error.message.match(/Minimum version required: (\d+)/)
+          if (match) {
+            const minVersion = parseInt(match[1])
+            setErrorMessage(`Current QR version is too small. Minimum version ${minVersion} required for this content. Switch to "Auto" or select version ${minVersion} or higher.`)
+            toast({
+              title: 'Version Too Small',
+              description: `Your content requires at least QR version ${minVersion}. Please adjust the version setting.`,
+              variant: 'destructive'
+            })
+          } else {
+            setErrorMessage(error.message)
+            toast({
+              title: 'Error',
+              description: error.message,
+              variant: 'destructive'
+            })
+          }
+        } else {
+          setErrorMessage('Failed to generate QR code. Your content may be too large for a QR code.')
+          toast({
+            title: 'Error',
+            description: 'Failed to generate QR code. Your content may exceed the maximum capacity.',
+            variant: 'destructive'
+          })
+        }
       } finally {
         setIsGenerating(false)
       }
@@ -178,17 +200,17 @@ export function QRGenerator() {
                 placeholder="Enter text, URL, or any content for your QR code" 
                 value={formData.text || ''} 
                 onChange={(e) => setFormData({ text: e.target.value })} 
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               />
               
               {/* Capacity indicator */}
               {formData.text && (
                 <div className="mt-2">
-                  <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
+                  <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
                     <span>Capacity usage</span>
                     <span>{Math.round(capacityUsage)}%</span>
                   </div>
-                  <div className="h-1.5 w-full bg-gray-200 rounded-full overflow-hidden">
+                  <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
                     <div 
                       className={`h-full ${
                         capacityUsage > 90 ? 'bg-red-500' : 
@@ -207,7 +229,7 @@ export function QRGenerator() {
               {/* Advanced options */}
               <details className="mt-2">
                 <summary className="text-sm font-medium cursor-pointer">Advanced options</summary>
-                <div className="mt-3 space-y-3 p-3 border rounded-md">
+                <div className="mt-3 space-y-3 p-3 border border-border rounded-md">
                   <div>
                     <label className="text-sm font-medium mb-1 block">Error Correction Level</label>
                     <select
@@ -216,14 +238,14 @@ export function QRGenerator() {
                         ...prev, 
                         errorCorrectionLevel: e.target.value as 'L' | 'M' | 'Q' | 'H' 
                       }))}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                     >
                       <option value="L">Low (7% - Maximum data capacity)</option>
                       <option value="M">Medium (15% - Default)</option>
                       <option value="Q">Quartile (25% - Better scan reliability)</option>
                       <option value="H">High (30% - Best scan reliability)</option>
                     </select>
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-muted-foreground mt-1">
                       Lower correction levels allow more data but reduce scan reliability.
                     </p>
                   </div>
@@ -236,16 +258,36 @@ export function QRGenerator() {
                         ...prev, 
                         version: e.target.value ? Number(e.target.value) : undefined
                       }))}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                     >
                       <option value="">Auto (recommended)</option>
                       {Array.from({ length: 40 }, (_, i) => i + 1).map(v => (
                         <option key={v} value={v}>Version {v} {v >= 25 ? '(large)' : ''}</option>
                       ))}
                     </select>
-                    <p className="text-xs text-gray-500 mt-1">
-                      Higher versions can store more data but create larger QR codes that may be harder to scan.
-                    </p>
+                    <div className="text-xs text-muted-foreground mt-1 space-y-1">
+                      <p>Higher versions can store more data but create larger QR codes that may be harder to scan.</p>
+                      {formData.text && (
+                        <div className="flex items-center justify-between">
+                          <p className="text-blue-600 dark:text-blue-400">
+                            Minimum required version for current content: {QRCodeGenerator.getMinimumVersion(formData.text, qrOptions.errorCorrectionLevel)}
+                          </p>
+                          {qrOptions.version && qrOptions.version < QRCodeGenerator.getMinimumVersion(formData.text, qrOptions.errorCorrectionLevel) && (
+                            <Button 
+                              size="sm" 
+                              variant="outline" 
+                              onClick={() => setQROptions(prev => ({ 
+                                ...prev, 
+                                version: QRCodeGenerator.getMinimumVersion(formData.text, qrOptions.errorCorrectionLevel) 
+                              }))}
+                              className="text-xs h-6 px-2"
+                            >
+                              Auto-fix
+                            </Button>
+                          )}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               </details>
